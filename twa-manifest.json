@@ -1,0 +1,43 @@
+{
+  "packageId": "app.countright.scanner",
+  "host": "aagcountright.lovable.app",
+  "name": "CountRight",
+  "launcherName": "CountRight",
+  "display": "standalone",
+  "orientation": "default",
+  "themeColor": "#18ABBF",
+  "navigationColor": "#18ABBF",
+  "navigationColorDark": "#0b1220",
+  "navigationDividerColor": "#18ABBF",
+  "navigationDividerColorDark": "#0b1220",
+  "backgroundColor": "#0b1220",
+  "enableNotifications": false,
+  "startUrl": "/m",
+  "iconUrl": "https://aagcountright.lovable.app/icon-512-maskable.png",
+  "maskableIconUrl": "https://aagcountright.lovable.app/icon-512-maskable.png",
+  "appVersion": "1.0.0",
+  "appVersionName": "1.0.0",
+  "appVersionCode": 1,
+  "shortcuts": [
+    { "name": "Counter sign-in", "short_name": "Counter", "url": "/m", "chosenIconUrl": "https://aagcountright.lovable.app/icon-192.png" }
+  ],
+  "signingKey": {
+    "path": "./android.keystore",
+    "alias": "countright"
+  },
+  "splashScreenFadeOutDuration": 300,
+  "generatorApp": "bubblewrap-cli",
+  "webManifestUrl": "https://aagcountright.lovable.app/manifest.webmanifest",
+  "fallbackType": "customtabs",
+  "features": {},
+  "alphaDependencies": { "enabled": false },
+  "enableSiteSettingsShortcut": true,
+  "isChromeOSOnly": false,
+  "isMetaQuest": false,
+  "fullScopeUrl": "https://aagcountright.lovable.app/",
+  "minSdkVersion": 23,
+  "orientationLock": false,
+  "additionalTrustedOrigins": [],
+  "retainedBundles": [],
+  "appVersionTag": "v1.0.0"
+}

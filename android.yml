@@ -1,0 +1,162 @@
+name: Build Android APK
+
+# Builds a signed Trusted Web Activity APK + AAB for ManageEngine MDM deployment.
+# Outputs are uploaded as workflow artifacts on every run, and attached to a
+# GitHub Release when you push a tag like `android-v1.0.1`.
+#
+# Required repo secrets (Settings -> Secrets and variables -> Actions):
+#   ANDROID_KEYSTORE_BASE64    base64 of countright.keystore (`base64 -w0 countright.keystore`)
+#   ANDROID_KEYSTORE_PASSWORD  -storepass used when creating the keystore
+#   ANDROID_KEY_ALIAS          key alias (default: countright)
+#   ANDROID_KEY_PASSWORD       -keypass used when creating the keystore
+
+on:
+  push:
+    branches: [main]
+    tags: ['android-v*']
+    paths:
+      - 'android/twa-manifest.json'
+      - '.github/workflows/android.yml'
+  workflow_dispatch:
+    inputs:
+      version_code:
+        description: 'Override appVersionCode (optional)'
+        required: false
+      version_name:
+        description: 'Override appVersionName (optional)'
+        required: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Install Bubblewrap CLI
+        run: npm install -g @bubblewrap/cli@latest
+
+      - name: Verify required secrets
+        env:
+          KS_B64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          KS_PASS: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          KEY_PASS: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          if [ -z "$KS_B64" ] || [ -z "$KS_PASS" ] || [ -z "$KEY_PASS" ]; then
+            echo "::error::Missing required secrets: ANDROID_KEYSTORE_BASE64, ANDROID_KEYSTORE_PASSWORD, ANDROID_KEY_PASSWORD"
+            exit 1
+          fi
+
+      - name: Prepare build dir
+        run: |
+          mkdir -p android-build
+          cp android/twa-manifest.json android-build/twa-manifest.json
+
+      - name: Apply version overrides (manual dispatch)
+        if: ${{ github.event_name == 'workflow_dispatch' && (inputs.version_code != '' || inputs.version_name != '') }}
+        working-directory: android-build
+        run: |
+          node <<'EOF'
+          const fs = require('fs');
+          const m = JSON.parse(fs.readFileSync('twa-manifest.json', 'utf8'));
+          const vc = process.env.IN_VC;
+          const vn = process.env.IN_VN;
+          if (vc) m.appVersionCode = parseInt(vc, 10);
+          if (vn) { m.appVersionName = vn; m.appVersion = vn; m.appVersionTag = 'v' + vn; }
+          fs.writeFileSync('twa-manifest.json', JSON.stringify(m, null, 2));
+          console.log('Updated to', m.appVersionName, m.appVersionCode);
+          EOF
+        env:
+          IN_VC: ${{ inputs.version_code }}
+          IN_VN: ${{ inputs.version_name }}
+
+      - name: Decode signing keystore
+        working-directory: android-build
+        env:
+          KS_B64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+        run: |
+          echo "$KS_B64" | base64 -d > android.keystore
+          ls -lh android.keystore
+
+      - name: Update Bubblewrap (fetch project files)
+        working-directory: android-build
+        env:
+          KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          KS_PASS: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          KEY_PASS: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          bubblewrap update \
+            --skipVersionUpgrade \
+            --appVersionName "$(node -p "require('./twa-manifest.json').appVersionName")" \
+            --skipPwaValidation || true
+
+      - name: Bubblewrap build
+        working-directory: android-build
+        env:
+          KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          KS_PASS: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          KEY_PASS: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          bubblewrap build \
+            --skipPwaValidation \
+            --signingKeyPath ./android.keystore \
+            --signingKeyAlias "${KEY_ALIAS:-countright}" \
+            --keystorePassword "$KS_PASS" \
+            --keyPassword "$KEY_PASS"
+
+      - name: Rename outputs
+        working-directory: android-build
+        run: |
+          test -f app-release-signed.apk && cp app-release-signed.apk countright-release.apk || true
+          test -f app-release-bundle.aab && cp app-release-bundle.aab countright-release.aab || true
+          ls -lh countright-release.* assetlinks.json 2>/dev/null || true
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: countright-apk
+          path: |
+            android-build/countright-release.apk
+            android-build/countright-release.aab
+            android-build/assetlinks.json
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Attach to GitHub Release (on tag)
+        if: startsWith(github.ref, 'refs/tags/android-v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            android-build/countright-release.apk
+            android-build/countright-release.aab
+            android-build/assetlinks.json
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Print SHA-256 cert fingerprint
+        if: always()
+        working-directory: android-build
+        env:
+          KS_PASS: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+        run: |
+          echo "::group::SHA-256 fingerprint (paste into src/routes/[.]well-known.assetlinks[.]json.ts)"
+          keytool -list -v \
+            -keystore android.keystore \
+            -alias "${KEY_ALIAS:-countright}" \
+            -storepass "$KS_PASS" 2>/dev/null | grep -E "SHA256:" || true
+          echo "::endgroup::"
