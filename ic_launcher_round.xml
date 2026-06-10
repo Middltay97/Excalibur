@@ -1,0 +1,20 @@
+{
+	"appId": "app.countright.scanner",
+	"appName": "CountRight",
+	"webDir": "capacitor-www",
+	"server": {
+		"url": "https://aagcountright.lovable.app/m",
+		"cleartext": false,
+		"androidScheme": "https",
+		"allowNavigation": [
+			"aagcountright.lovable.app",
+			"*.lovable.app",
+			"*.supabase.co"
+		]
+	},
+	"android": {
+		"allowMixedContent": false,
+		"captureInput": true,
+		"webContentsDebuggingEnabled": false
+	}
+}
