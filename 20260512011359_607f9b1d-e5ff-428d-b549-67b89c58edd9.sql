@@ -1,0 +1,1 @@
+DROP FUNCTION IF EXISTS public.get_user_id_by_badge(text);

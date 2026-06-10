@@ -1,0 +1,1 @@
+ALTER TABLE public.sku_master ADD COLUMN IF NOT EXISTS is_tertiary boolean NOT NULL DEFAULT false;

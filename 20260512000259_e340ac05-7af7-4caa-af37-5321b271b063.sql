@@ -1,0 +1,1 @@
+REVOKE EXECUTE ON FUNCTION public.get_user_id_by_badge(text) FROM anon, authenticated, public;

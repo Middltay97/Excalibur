@@ -1,0 +1,1 @@
+ALTER TYPE public.cycle_status ADD VALUE IF NOT EXISTS 'verified' AFTER 'verifying';

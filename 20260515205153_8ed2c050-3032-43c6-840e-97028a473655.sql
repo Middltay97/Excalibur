@@ -1,0 +1,1 @@
+ALTER TABLE public.sku_master ADD COLUMN IF NOT EXISTS on_hand_qty numeric;
