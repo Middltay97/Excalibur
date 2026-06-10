@@ -1,0 +1,232 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@source "../src";
+
+@custom-variant dark (&:is(.dark *));
+
+/*
+ * Cycle Counting design system — adapted from Echelon Signflow.
+ * Teal primary (#18ABBF), dark sidebar, light enterprise surfaces.
+ * All colors expressed in oklch.
+ */
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+}
+
+:root {
+  --radius: 0.5rem;
+
+  /* Surfaces */
+  --background: oklch(0.984 0.005 230);
+  --foreground: oklch(0.27 0.03 255);
+
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.27 0.03 255);
+
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.27 0.03 255);
+
+  /* Primary teal #18ABBF */
+  --primary: oklch(0.69 0.115 215);
+  --primary-foreground: oklch(1 0 0);
+
+  --secondary: oklch(0.965 0.005 230);
+  --secondary-foreground: oklch(0.3 0.03 255);
+
+  --muted: oklch(0.96 0.005 230);
+  --muted-foreground: oklch(0.55 0.02 255);
+
+  --accent: oklch(0.95 0.01 230);
+  --accent-foreground: oklch(0.27 0.03 255);
+
+  --destructive: oklch(0.6 0.22 27);
+  --destructive-foreground: oklch(1 0 0);
+
+  --success: oklch(0.7 0.15 160);
+  --success-foreground: oklch(1 0 0);
+
+  --warning: oklch(0.78 0.16 75);
+  --warning-foreground: oklch(0.25 0.05 75);
+
+  --border: oklch(0.9 0.01 240);
+  --input: oklch(0.9 0.01 240);
+  --ring: oklch(0.69 0.115 215);
+
+  /* Sidebar — dark #2A3346 */
+  --sidebar: oklch(0.3 0.03 260);
+  --sidebar-foreground: oklch(0.98 0.005 230);
+  --sidebar-primary: oklch(0.72 0.12 215);
+  --sidebar-primary-foreground: oklch(1 0 0);
+  --sidebar-accent: oklch(0.69 0.115 215);
+  --sidebar-accent-foreground: oklch(1 0 0);
+  --sidebar-border: oklch(0.36 0.03 260);
+  --sidebar-ring: oklch(0.72 0.12 215);
+
+  /* Chart palette — inspired by Echelon Nexus (teal primary, warm orange accent,
+     dark navy, emerald success, amber warning) */
+  --chart-1: hsl(187, 78%, 42%);   /* teal primary */
+  --chart-2: hsl(220, 25%, 35%);   /* navy secondary */
+  --chart-3: hsl(187, 78%, 32%);   /* teal dark */
+  --chart-4: hsl(187, 78%, 60%);   /* teal light */
+  --chart-5: hsl(187, 78%, 75%);   /* teal accent */
+
+  /* Gradients & shadows */
+  --gradient-primary: linear-gradient(135deg, oklch(0.69 0.115 215), oklch(0.75 0.12 210));
+  --gradient-hero: linear-gradient(135deg, oklch(0.984 0.005 230) 0%, oklch(0.96 0.008 220) 50%, oklch(0.984 0.005 230) 100%);
+  --shadow-card: 0 1px 3px 0 oklch(0.27 0.03 255 / 0.06), 0 1px 2px 0 oklch(0.27 0.03 255 / 0.04);
+}
+
+.dark {
+  --background: oklch(0.2 0.025 260);
+  --foreground: oklch(0.98 0.005 230);
+  --card: oklch(0.24 0.025 260);
+  --card-foreground: oklch(0.98 0.005 230);
+  --popover: oklch(0.24 0.025 260);
+  --popover-foreground: oklch(0.98 0.005 230);
+  --primary: oklch(0.72 0.12 215);
+  --primary-foreground: oklch(0.15 0.02 260);
+  --secondary: oklch(0.28 0.03 260);
+  --secondary-foreground: oklch(0.98 0.005 230);
+  --muted: oklch(0.28 0.03 260);
+  --muted-foreground: oklch(0.7 0.02 240);
+  --accent: oklch(0.32 0.04 260);
+  --accent-foreground: oklch(0.98 0.005 230);
+  --destructive: oklch(0.65 0.2 25);
+  --destructive-foreground: oklch(1 0 0);
+  --success: oklch(0.72 0.15 160);
+  --success-foreground: oklch(0.15 0.02 260);
+  --warning: oklch(0.8 0.16 75);
+  --warning-foreground: oklch(0.2 0.05 75);
+  --border: oklch(0.32 0.03 260);
+  --input: oklch(0.32 0.03 260);
+  --ring: oklch(0.72 0.12 215);
+  --sidebar: oklch(0.18 0.025 260);
+  --sidebar-foreground: oklch(0.98 0.005 230);
+  --sidebar-primary: oklch(0.72 0.12 215);
+  --sidebar-primary-foreground: oklch(1 0 0);
+  --sidebar-accent: oklch(0.3 0.04 260);
+  --sidebar-accent-foreground: oklch(0.98 0.005 230);
+  --sidebar-border: oklch(0.28 0.03 260);
+  --sidebar-ring: oklch(0.72 0.12 215);
+  --chart-1: hsl(187, 78%, 52%);
+  --chart-2: hsl(220, 25%, 60%);
+  --chart-3: hsl(187, 78%, 38%);
+  --chart-4: hsl(187, 78%, 68%);
+  --chart-5: hsl(187, 78%, 80%);
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
+@layer components {
+  .card-elevated {
+    @apply rounded-lg border border-border bg-card p-6;
+    box-shadow: var(--shadow-card);
+  }
+  .card-stats {
+    @apply rounded-lg border border-border bg-card p-6 flex flex-col gap-2;
+    box-shadow: var(--shadow-card);
+  }
+  .metric-value {
+    @apply text-3xl font-bold tracking-tight text-foreground;
+  }
+  .metric-label {
+    @apply text-sm text-muted-foreground;
+  }
+
+  .status-badge,
+  .status-badge-pending,
+  .status-badge-active,
+  .status-badge-complete,
+  .status-badge-error {
+    @apply inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium;
+  }
+  .status-badge-pending {
+    background: color-mix(in oklab, var(--warning) 18%, transparent);
+    color: var(--warning);
+  }
+  .status-badge-active {
+    background: color-mix(in oklab, var(--primary) 18%, transparent);
+    color: var(--primary);
+  }
+  .status-badge-complete {
+    background: color-mix(in oklab, var(--success) 18%, transparent);
+    color: var(--success);
+  }
+  .status-badge-error {
+    background: color-mix(in oklab, var(--destructive) 18%, transparent);
+    color: var(--destructive);
+  }
+
+  .data-table {
+    @apply w-full text-sm;
+  }
+  .data-table thead {
+    background: color-mix(in oklab, var(--muted) 60%, transparent);
+  }
+  .data-table th {
+    @apply px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground;
+  }
+  .data-table td {
+    @apply px-4 py-3 text-foreground;
+  }
+  .data-table tbody tr {
+    @apply border-b border-border/50 transition-colors;
+  }
+  .data-table tbody tr:hover {
+    background: color-mix(in oklab, var(--muted) 40%, transparent);
+  }
+}
+
+@media print {
+  .no-print { display: none !important; }
+  body { background: white; }
+}
